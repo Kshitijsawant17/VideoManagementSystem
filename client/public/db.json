@@ -1,0 +1,28 @@
+{
+  "students": [
+    {
+      "id": "1",
+      "name": "Seema",
+      "place": "Mumbai",
+      "phone": "9876543210"
+    },
+    {
+      "id": "2",
+      "name": "Khanam",
+      "place": "Mysore",
+      "phone": "9876543231"
+    },
+    {
+      "id": "15",
+      "name": "Siya",
+      "place": "Gujarat",
+      "phone": "9878767521"
+    },
+    {
+      "id": "56",
+      "name": "Sanjay",
+      "place": "Mysore",
+      "phone": "9786767641"
+    }
+  ]
+}

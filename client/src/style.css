@@ -1,0 +1,19 @@
+.root {
+    max-width: 1600px;
+}
+
+.main-container {
+    margin: 18px;
+}
+
+.header-container {
+    height: 72px;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo-container {
+    margin: 12px 32px;
+}
