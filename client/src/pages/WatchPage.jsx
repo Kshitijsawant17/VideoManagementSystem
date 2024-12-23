@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams} from 'react-router-dom';
 import { getLogo, uploadLogo, getAgreeStatus } from '../service/user.service';
-import { watchVideo } from '../api';
+import { watchVideo } from '../service/video.service';
 import { 
   Box,
   IconButton

@@ -18,7 +18,7 @@ import {
 
 router.post('/', protect, getVideos);
 router.post('/upload', fileUploadMiddleware, attachFilePath, uploadVideo);
-router.get('/watch', protect, getVideoById);
+router.post('/watch', protect, getVideoById);
 router.get('/getAll', getVideos);
 router.post('/getClientAll', getClientVideos);
 router.post('/delete', deleteVideo);

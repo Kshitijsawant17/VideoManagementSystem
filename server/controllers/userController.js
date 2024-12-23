@@ -28,7 +28,7 @@ const registerUser = async (req, res) => {
       password: hashedPassword, 
       role:'admin', 
       clone: true, 
-      logo:'/uploads/1734725885405-271759569.png', 
+      logo:'/uploads/1734928957402-946974182.png', 
       logo_agree: true 
     });
   }
