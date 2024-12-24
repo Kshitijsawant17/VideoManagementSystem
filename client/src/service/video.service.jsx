@@ -1,6 +1,5 @@
 import API from './axiosInstance';
 
-// export const fetchVideo = () => API.get('/video/get/:id');getClientVideos
 export const fetchVideos = () => API.get('/videos/getAll');
 export const getClientVideos = (data) => API.post('/videos/getClientAll', data);
 export const videoUpload = (data) => API.post('/videos/upload', data);

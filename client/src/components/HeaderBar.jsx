@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { isAuthenticated, removeUserData, getId } from '../utils/auth';
+import { isAuthenticated, removeUserData, getId, getRole } from '../utils/auth';
 import { getLogo, uploadLogo } from '../service/user.service';
 import PhotoCameraOutlinedIcon from '@mui/icons-material/PhotoCameraOutlined';
 import { 
@@ -10,19 +10,21 @@ import {
 
 const HeaderBar = () => {
   const authenticated = isAuthenticated();
-  const [logo, setLogo] = useState("/assets/logo2.png");
+  const [logo, setLogo] = useState(`${process.env.REACT_APP_API_HOST_DEV}` + '/uploads/logo/company_logo.png');
 
   const handleLogOut = () => {
     removeUserData();
   } 
   const handleFileChange = async (event) => {
-      const userId = getId()
+      const userId = getId();
+      const userRole = getRole();
       const file = event.target.files[0];
       if (!file) return;
 
       const formData = new FormData();
       formData.append('logo', file);
       formData.append('id', userId);
+      formData.append('role', userRole);
       try {
           const response = await uploadLogo(formData, {
               headers: {
@@ -43,7 +45,7 @@ const HeaderBar = () => {
   useEffect(() => {
     const userId = getId();
     getLogoFunc(userId)
-  }, [])
+  }, [logo])
 
   return (
     <div>

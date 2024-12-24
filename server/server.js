@@ -11,6 +11,7 @@ import videoPlayListRoutes from './routes/videoPlayListRoutes.js';
 import userVideoRoutes from './routes/videoUserRoutes.js';
 import userPlaylistRoutes from './routes/userPlaylistRoutes.js';
 import { fileURLToPath } from 'url';
+const __dirname = path.resolve();
 
 import dotenv from 'dotenv';
 
@@ -22,9 +23,14 @@ const app = express();
 // Middleware
 app.use(cors());
 app.use(bodyParser.json());
+app.use(express.static(path.join(__dirname, 'client/build')));
 
-// app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+// app.get('*', (req, res) => {
+//   res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
+// });
+
 app.use('/uploads', express.static(path.join(path.dirname(fileURLToPath(import.meta.url)), 'uploads')));
+
 
 
 // Connect to MongoDB

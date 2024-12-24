@@ -1,6 +1,5 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { useTheme } from './context/ThemeContext';
 import { AuthProvider } from './context/AuthContext';
 import LoginPage from './pages/LoginPage';
 import SignUpPage from './pages/SignUpPage';
@@ -13,14 +12,9 @@ import Home from './pages/Home';
 import NotFound from './pages/NotFound';
 import ClientRoute from './components/ClientRoute';
 import AdminRoute from './components/AdminRoute';
-import { isAuthenticated } from './utils/auth';
-
 import './App.css';
 
 const App = () => {
-  const { theme } = useTheme();
-  const authenticated = isAuthenticated();
-
   return (
     <div
       style={{

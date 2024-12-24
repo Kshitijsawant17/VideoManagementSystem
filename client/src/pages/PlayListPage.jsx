@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { fetchVideoPlayList } from '../service/videoPlaylist.service';
-import { getLogo, uploadLogo, getAgreeStatus } from '../service/user.service';
+import { getLogo, uploadCustomLogo, getAgreeStatus } from '../service/user.service';
 import { 
   Box,
   List, 
@@ -19,7 +19,7 @@ const PlayListPage = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
   const [path, setPath] = useState('');
-  const [logo, setLogo] = useState("/assets/logo2.png");
+  const [logo, setLogo] = useState("");
   const [agreeStatus, setAgreeStatus] = useState(false);
 
   const handleFileChange = async (event) => {
@@ -28,10 +28,10 @@ const PlayListPage = () => {
         const file = event.target.files[0];
         if (!file) return;
         const formData = new FormData();
-        formData.append('logo', file);
+        formData.append('custom-logo', file);
         formData.append('id', userId);
         try {
-            const response = await uploadLogo(formData, {
+            const response = await uploadCustomLogo(formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },

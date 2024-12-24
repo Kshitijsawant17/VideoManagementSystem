@@ -36,7 +36,7 @@ const Home = () => {
   const [value, setValue] = React.useState('1');
   const [videos, setVideos] = useState([]);
   const [playLists, setPlayLists] = useState([]);
-  const [logo, setLogo] = useState("/assets/logo2.png");
+  const [logo, setLogo] = useState(`${process.env.REACT_APP_API_HOST_DEV}` + '/uploads/logo/company_logo.png');
 
   const authenticated = isAuthenticated();
 

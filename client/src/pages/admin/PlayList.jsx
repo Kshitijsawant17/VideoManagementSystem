@@ -8,6 +8,7 @@ import {
   editPlayList 
 } from '../../service/playList.service';
 import { getId } from '../../utils/auth';
+import AlertDialog from '../../components/CustomDialog';
 import { 
     Box, 
     Button, 
@@ -22,7 +23,9 @@ import {
     TableBody,
     Typography,
     IconButton,
-    Input
+    Input,
+    Snackbar,
+    Alert
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
@@ -57,21 +60,42 @@ const PlayList = () => {
   const [editingId, setEditingId] = useState("");
   const [editedData, setEditedData] = useState("");
 
+  const [alertMessage, setAlertMessage] = useState("");
+  const [openSuccessAlert, setOpenSuccessAlert] = useState(false);
+  const [openErrorAlert, setOpenErrorAlert] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [playlistId, setPlaylistId] = useState("");
+
   const navigate = useNavigate();
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  const handleDelete = async (id) => {
-    const response = await deletePlaylist({id: id});
-    fetchPlayListFunc();
+  const handleDialog = (e, id) => {
+    setPlaylistId(id);
+    setOpenDialog(true);
   }
-  const handleEdit = (id) => {
+
+  const handleDelete = async (data) => {
+    setOpenDialog(false);
+    if(data){
+      const response = await deletePlaylist({id: playlistId});
+      setAlertMessage(response.data.message);
+      if(response.status == 200) setOpenSuccessAlert(true);
+      else setOpenErrorAlert(true);
+      fetchPlayListFunc();
+    }
+    
+  }
+  const handleEdit = async (id) => {
     if(startEdit){
-      editPlayList({id:id, name:editedData});
+      const response =  await editPlayList({id:id, name:editedData});
+      setAlertMessage(response.data.message);
+      if(response.status == 200) setOpenSuccessAlert(true);
+      else setOpenErrorAlert(true);
     }
     startEdit?setStartEdit(false):setStartEdit(true);
     editingId?setEditingId(""):setEditingId(id);
-    fetchPlayListFunc();
+    await fetchPlayListFunc();
   }
   const handleInputChange = (e, id) => {
     setEditedData(e.target.value);
@@ -79,6 +103,18 @@ const PlayList = () => {
   const handleInputFocus = (e) => {
     setEditedData(e.target.defaultValue);
     console.log(e.target.defaultValue);
+  }
+  const handleCloseSuccessAlert = (e, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpenSuccessAlert(false);
+  }
+  const handleCloseErrorAlert = (e, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpenErrorAlert(false);
   }
   const fetchPlayListFunc = async () => {
     try{
@@ -162,7 +198,7 @@ const PlayList = () => {
                             </IconButton>
                           </TableCell>
                           <TableCell align='center' style={{color:'white'}}>
-                            <IconButton onClick={(e) => handleDelete(row._id)} >
+                            <IconButton onClick={(e) => handleDialog(e, row._id)} >
                                 <DeleteIcon style={{color:'white'}}  />
                             </IconButton>
                           </TableCell>
@@ -174,6 +210,38 @@ const PlayList = () => {
           </Table>
         </TableContainer>
       </Box>
+
+      <Snackbar 
+        open={openSuccessAlert} 
+        autoHideDuration={3000} 
+        onClose={handleCloseSuccessAlert}
+        anchorOrigin={{ vertical:'top', horizontal:'right' }}
+      >
+        <Alert onClose={handleCloseSuccessAlert} severity="success">
+          {alertMessage}
+        </Alert>
+      </Snackbar>
+
+      <Snackbar 
+        open={openErrorAlert} 
+        autoHideDuration={3000} 
+        onClose={handleCloseErrorAlert}
+        anchorOrigin={{ vertical:'top', horizontal:'right' }}
+      >
+        <Alert onClose={handleCloseErrorAlert} severity="error">
+          {alertMessage}
+        </Alert>
+      </Snackbar>
+
+      {
+        openDialog?
+        < AlertDialog 
+          trigger={openDialog}
+          message={"Do you really want to delete this playlist?"} 
+          callback={handleDelete} 
+        />
+        :<></>
+      }
       
       {/* New Playlist Adding Modal */}
 

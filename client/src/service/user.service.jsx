@@ -1,19 +1,12 @@
-// import axios from 'axios';
 import API from './axiosInstance';
-// const API = axios.create({ baseURL: `${process.env.REACT_APP_API_HOST_DEV}/api` });
 
-// Attach JWT token to requests
-// API.interceptors.request.use((req) => {
-//     const token = localStorage.getItem('userData').token;
-//     if (token) req.headers.Authorization = `Bearer ${token}`;
-//     return req;
-// });
-
-// export const fetchVideo = () => API.get('/video/get/:id');
+export const registerUser = (data) => API.post('/users/register', data);
+export const loginUser = (data) => API.post('/users/login', data);
 export const fetchUsers = () => API.get('/users/getAll');
 export const editUser = (data) => API.post('/users/add', data);
 export const getLogo = (data) => API.post('/users/getLogo', data);
 export const uploadLogo = (data) => API.post('/users/uploadLogo', data);
+export const uploadCustomLogo = (data) => API.post('/users/uploadCustomLogo', data);
 export const getAgreeStatus = (data) => API.post('/users/getAgreeStatus', data);
 export const changeAgreeStatus = (data) => API.post('/users/changeAgreeStatus', data);
 export const getCloneStatus = (data) => API.post('/users/getCloneStatus', data);

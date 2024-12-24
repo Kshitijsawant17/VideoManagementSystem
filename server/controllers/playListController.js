@@ -1,55 +1,52 @@
 import PlayList from '../models/PlayList.js';
 import UserPlaylist from '../models/UserPlaylist.js';
 import VideoPlayList from '../models/VideoPlayList.js';
+import { MESSAGE_CONSTANTS } from '../utils/constants.js';
 
 const addPlayList = async (req, res) => {
   const { userId, name } = req.body;
-
     try{
         const playListExists = await PlayList.findOne({ userId: userId, name: name });
-        if (playListExists) return res.status(400).json({ message: 'PlayList already exists' });
+        if (playListExists) return res.status(400).json({ message: MESSAGE_CONSTANTS.PLAYLIST_EXISTS });
         await PlayList.create({ userId: userId, name: name });
-        return res.status(200).json({ message: 'PlayList added successfully!' });
+        return res.status(200).json({ message: MESSAGE_CONSTANTS.PLAYLIST_ADD_SUCCESS });
     }
     catch(err){
-        return res.status(500).json({ message: 'Failed PlayList adding', error:err });
+        return res.status(500).json({ message: MESSAGE_CONSTANTS.PLAYLIST_ADD_FAILED, error:err });
     }
 };
 
 const updatePlayList = async (req, res) => {
     const { id, name } = req.body;
-    
     try{
         const playListExist = await PlayList.findOne({ _id: id });
-        if(!playListExist) return res.status(400).json({ message: 'PlayList does not exist' });
+        if(!playListExist) return res.status(200).json({ message: MESSAGE_CONSTANTS.PLAYLIST_NOT_EXISTS });
         await PlayList.updateOne({ _id: id }, { $set: { name: name } });
-        return res.status(200).json({ message: 'success' });
+        return res.status(200).json({ message: MESSAGE_CONSTANTS.PLAYLIST_EDIT_SUCCESS });
     }
     catch(err){
-        return res.status(500).json({ message: 'error' });
+        return res.status(500).json({ message: MESSAGE_CONSTANTS.PLAYLIST_EDIT_FAILED });
     }
 };
 
 const deletePlayList = async (req, res) => {
     const { id } = req.body;
-
     if(!id) return res.status(400).json({ message: 'Invalid Id' });
-    
     try{
         await PlayList.deleteOne({_id: id});
         const result = await removeDataByPlaylist(id);
-        if(result.status === 'success') return res.status(200).json({ message: 'success' });
+        if(result.status === 'success') return res.status(200).json({ message: MESSAGE_CONSTANTS.PLAYLIST_DELETE_SUCCESS });
         else return res.status(500).json({ message: result.message });
     }
     catch(err){
-        return res.status(500).json({ message: 'error' });
+        return res.status(500).json({ message: MESSAGE_CONSTANTS.PLAYLIST_DELETE_FAILED });
     }
 };
 
 const getAllPlayLists = async (req, res) => {
     try{
         const playLists = await PlayList.find();
-        if(!playLists || playLists.length == 0) return res.status(200).json({ message: 'No Playlist Found', data: playLists });
+        if(!playLists || playLists.length == 0) return res.status(200).json({ message: MESSAGE_CONSTANTS.PLAYLIST_NOT_EXISTS, data: playLists });
         return res.status(200).json({ message: 'success', data: playLists });
     }
     catch(err){
@@ -59,15 +56,11 @@ const getAllPlayLists = async (req, res) => {
 
 const getClientPlaylists = async (req, res) => {
     const {userId} = req.body;
-  
     try {
       const clientPlaylists = await UserPlaylist.find({userId: userId});
-  
       if (!clientPlaylists || clientPlaylists.length === 0) {
-        return res.status(200).json({ message: 'No playlists found', data: clientPlaylists });
+        return res.status(200).json({ message: MESSAGE_CONSTANTS.PLAYLIST_NOT_EXISTS, data: clientPlaylists });
       }
-  
-      // Process playlists
       const playlistDetails = await Promise.all(
         clientPlaylists.map(async (item) => {
           try {
@@ -81,23 +74,20 @@ const getClientPlaylists = async (req, res) => {
           }
         })
       );
-  
-      // Send consolidated responsegetClientVideos
       return res.status(200).json(playlistDetails);
     } catch (error) {
-      console.error('Error fetching playlists:', error);
+      console.error(MESSAGE_CONSTANTS.PLAYLIST_FETCH_FAILED, error);
       return res.status(500).json({ message: 'Server error', error });
     }
 };
 
 const removeDataByPlaylist = async (id) => {
     try {
-        // Perform a bulk update to remove playlistId from all videos in the playlist
         await UserPlaylist.deleteMany( { playlistId: id } );
         await VideoPlayList.deleteMany({playlistId: id});
         return { status: 'success'}
       } catch (error) {
-        return { status: 'failed', message: 'Error removing playlist data'}
+        return { status: 'failed', message: MESSAGE_CONSTANTS.PLAYLIST_DATA_REMOVE_FAILED}
       }
 }
 

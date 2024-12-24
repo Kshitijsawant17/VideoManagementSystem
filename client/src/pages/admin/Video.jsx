@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { fetchPlayLists } from '../../service/playList.service';
 import { fetchVideos, videoUpload, deleteVideo, editVideo } from '../../service/video.service';
 import { editVideoPlayList } from '../../service/videoPlaylist.service';
+import AlertDialog from '../../components/CustomDialog';
 import { 
     Box, 
     Button, 
@@ -23,7 +24,9 @@ import {
     FormControl,
     Select,
     MenuItem,
-    InputLabel
+    InputLabel,
+    Snackbar,
+    Alert
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
@@ -78,6 +81,12 @@ const Video = () => {
   const [descEditedData, setDescEditedData] = useState("");
   const [titleEditedData, setTitleEditedData] = useState("");
 
+  const [alertMessage, setAlertMessage] = useState("");
+  const [openSuccessAlert, setOpenSuccessAlert] = useState(false);
+  const [openErrorAlert, setOpenErrorAlert] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [videoId, setVideoId] = useState("");
+
   const navigate = useNavigate();
   const handleselectVideoModalClose = () => setSelectVideoModalOpen(false);
 
@@ -85,20 +94,34 @@ const Video = () => {
     const response = await fetchVideos();
     if(response.data.length > 0) setVideos(response.data);
   };
+  const handleDialog = (e, id) => {
+    setVideoId(id);
+    setOpenDialog(true);
+  }
   const handleChange = async (e, id) => {
     await editVideoPlayList({videoId: id, new_value: e.target.value});
     setListValue(e.target.value);
   };
-  const handleDelete = async (e, id) => {
-    await deleteVideo({id: id});
-    await fetchVideoFunc();
+  const handleDelete = async (data) => {
+    setOpenDialog(false);
+    if(data){
+      const response = await deleteVideo({id: videoId});
+      setAlertMessage(response.data.message);
+      if(response.status == 200) setOpenSuccessAlert(true);
+      else setOpenErrorAlert(true);
+      await fetchVideoFunc();
+    }
+    
   }
   const handlePlaylistSelectChange = (e) => {
     setSelectedPlaylist(e.target.value)
   }
   const handleEdit = async (id) => {
     if(startEdit){
-      await editVideo({id:id, title:titleEditedData, description: descEditedData });
+      const response = await editVideo({id:id, title:titleEditedData, description: descEditedData });
+      setAlertMessage(response.data.message);
+      if(response.status == 200) setOpenSuccessAlert(true);
+      else setOpenErrorAlert(true);
     }
     startEdit?setStartEdit(false):setStartEdit(true);
     editingId?setEditingId(""):setEditingId(id);
@@ -116,6 +139,19 @@ const Video = () => {
   const handleDescInputFocus = (e) => {
     setDescEditedData(e.target.defaultValue);
   }
+  const handleCloseSuccessAlert = (e, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpenSuccessAlert(false);
+  }
+  const handleCloseErrorAlert = (e, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpenErrorAlert(false);
+  }
+
   const fetchPlayListFunc = async () => {
     try{
         const response = await fetchPlayLists();
@@ -199,7 +235,7 @@ const Video = () => {
                             )}
                           </TableCell>
                           <TableCell align='center' width={500} style={{color:'white', overflow:'hidden', textOverflow:'ellipsis'}}>
-                              <p style={{height:'40px', overflow:'hidden', textOverflow:'ellipsis'}}>
+                              <div style={{height:'40px', overflow:'hidden', textOverflow:'ellipsis'}}>
                                 {startEdit && row.id === editingId ? (
                                   <TextField
                                     id="desc-textField"
@@ -214,10 +250,9 @@ const Video = () => {
                                 ) : (
                                   row.description
                                 )}
-                                </p>
+                                </div>
                           </TableCell>
                           <TableCell align='center' style={{color:'white'}}>
-
                               <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
                                   <Select
                                       labelId="demo-simple-select-standard-label"
@@ -240,7 +275,6 @@ const Video = () => {
                                       }
                                   </Select>
                               </FormControl>
-
                           </TableCell>
                           <TableCell align='center' style={{color:'white'}}>
                           <IconButton onClick={(e) => handleEdit(row.id)}>
@@ -251,7 +285,7 @@ const Video = () => {
                           </IconButton>
                           </TableCell>
                           <TableCell align='center' style={{color:'white'}}>
-                          <IconButton onClick={(e) => handleDelete(e, row.id)}>
+                          <IconButton onClick={(e) => handleDialog(e, row.id)}>
                               <DeleteIcon style={{color:'white'}}  />
                           </IconButton>
                           </TableCell>
@@ -263,6 +297,38 @@ const Video = () => {
           </Table>
         </TableContainer>
       </Box>
+
+      <Snackbar 
+        open={openSuccessAlert} 
+        autoHideDuration={3000} 
+        onClose={handleCloseSuccessAlert}
+        anchorOrigin={{ vertical:'top', horizontal:'right' }}
+      >
+        <Alert onClose={handleCloseSuccessAlert} severity="success">
+          {alertMessage}
+        </Alert>
+      </Snackbar>
+
+      <Snackbar 
+        open={openErrorAlert} 
+        autoHideDuration={3000} 
+        onClose={handleCloseErrorAlert}
+        anchorOrigin={{ vertical:'top', horizontal:'right' }}
+      >
+        <Alert onClose={handleCloseErrorAlert} severity="error">
+          {alertMessage}
+        </Alert>
+      </Snackbar>
+
+      {
+        openDialog?
+        < AlertDialog 
+          trigger={openDialog}
+          message={"Do you really want to delete this video file?"} 
+          callback={handleDelete} 
+        />
+        :<></>
+      }
 
       {/* New Video Adding Modal */}
       
@@ -326,7 +392,7 @@ const Video = () => {
                 overflow: 'auto',
               },
             }}
-            rows={5}
+            minRows={3}
             maxRows={5}
           />
           <FormControl variant="standard" fullWidth sx={{ m: 1, minWidth: 120 }}>

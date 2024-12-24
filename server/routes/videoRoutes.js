@@ -1,5 +1,4 @@
 import express from 'express';
-import multer from 'multer';
 import protect from '../middleware/authMiddleware.js';
 import { 
   uploadVideo,
@@ -9,15 +8,12 @@ import {
   updateVideo,
   deleteVideo
  } from '../controllers/videoController.js';
- import {
-  fileUploadMiddleware,
-  attachFilePath 
- } from '../middleware/uploadMiddleware.js';
+ import { uploadFileMiddleware, attachFilePath } from '../middleware/fileUploadMiddleware.js';
 
  const router = express.Router();
 
 router.post('/', protect, getVideos);
-router.post('/upload', fileUploadMiddleware, attachFilePath, uploadVideo);
+router.post('/upload', uploadFileMiddleware('video'), attachFilePath, uploadVideo);
 router.post('/watch', protect, getVideoById);
 router.get('/getAll', getVideos);
 router.post('/getClientAll', getClientVideos);

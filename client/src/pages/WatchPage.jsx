@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams} from 'react-router-dom';
-import { getLogo, uploadLogo, getAgreeStatus } from '../service/user.service';
+import { getLogo, uploadCustomLogo, getAgreeStatus } from '../service/user.service';
 import { watchVideo } from '../service/video.service';
 import { 
   Box,
@@ -14,7 +14,7 @@ const WatchPage = () => {
   const [userId, setUserID] = useState('');
   const [videoID, setVideoID] = useState('');
   const [loading, setLoading] = useState(true);
-  const [logo, setLogo] = useState("/assets/logo2.png");
+  const [logo, setLogo] = useState("");
   const [agreeStatus, setAgreeStatus] = useState(false);
 
   const { id } = useParams();
@@ -25,10 +25,10 @@ const WatchPage = () => {
         const file = event.target.files[0];
         if (!file) return;
         const formData = new FormData();
-        formData.append('logo', file);
+        formData.append('custom-logo', file);
         formData.append('id', userId);
         try {
-            const response = await uploadLogo(formData, {
+            const response = await uploadCustomLogo(formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
@@ -68,8 +68,8 @@ const WatchPage = () => {
       setVideoID(playListId);
     }
     if(userId && videoID){
-      fetchVideoFunc();
       getLogoFunc();
+      fetchVideoFunc();
       getAgreeStatusFunc()
     }
   }, [id, userId, videoID]);
@@ -108,6 +108,7 @@ const WatchPage = () => {
             />
             <input
                 type="file"
+                name='custom-logo'
                 id="logoInput"
                 style={{ display: 'none' }}
                 onChange={handleFileChange}
