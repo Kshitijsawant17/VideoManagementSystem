@@ -29,7 +29,7 @@ npm install`
 
 Install client-side dependencies:
 
-`cd ../client
+`cd client
 npm install`
 
 ### Step 3: Configure Environment Variables
@@ -48,61 +48,62 @@ REACT_APP_API_URL=http://localhost:5000/api
 
 Note: Replace placeholders like your_jwt_secret and mern_database with actual values.
 
-Step 4: Start MongoDB
+### Step 4: Start MongoDB
 
 Start your MongoDB server:
 
 If using a local MongoDB installation, run:
 
-mongod
+`mongod`
 
 If using MongoDB Atlas, ensure your database is accessible and correctly configured in the MONGO_URI.
-Step 5: Run the Project
+
+### Step 5: Run the Project
 
 Start the Server:
 
 Navigate to the server directory and run:
 
-npm start
+`npm start`
 
 Start the Client:
 
 Navigate to the client directory and run:
 
-npm start
+`npm start`
 
-Step 6: Access the Application
+### Step 6: Access the Application
 
-Open your browser and go to:
+1. Open your browser and go to:
 
-Frontend: http://localhost:3000
+Frontend: (http://localhost:3000)
 
-Backend API: http://localhost:5000/api
+Backend API: (http://localhost:5000/api)
 
-Verify that both the client and server are running correctly.
+2. Verify that both the client and server are running correctly.
 
-Common Issues and Solutions
+#### Common Issues and Solutions
 
-Dependency Issues:
+1. Dependency Issues:
 
 Delete node_modules and package-lock.json or yarn.lock, then reinstall dependencies:
 
-rm -rf node_modules package-lock.json
-npm install
+`rm -rf node_modules package-lock.json
+npm install`
 
-MongoDB Connection Errors:
+2. MongoDB Connection Errors:
 
 Ensure MongoDB is running.
 
 Check your MONGO_URI value in .env.
 
-Port Conflicts:
+3. Port Conflicts:
 
 Modify the PORT in the .env file if another process is using the default ports.
 
-CORS Errors:
+4. CORS Errors:
 
 Ensure your server has CORS enabled:
 
-const cors = require('cors');
-app.use(cors());
+`const cors = require('cors');
+app.use(cors());`
