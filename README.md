@@ -2,39 +2,37 @@
 
 Ensure the following are installed on your machine:
 
-Node.js (v14 or later): Download Node.js
+1. Node.js (v14 or later): Download Node.js
 
-npm (bundled with Node.js) or yarn (optional): Install Yarn
+2. npm (bundled with Node.js) or yarn (optional): Install Yarn
 
-MongoDB: Install MongoDB Community Edition or use a cloud solution like MongoDB Atlas.
+3. MongoDB: Install MongoDB Community Edition or use a cloud solution like MongoDB Atlas.
 
-Git: Install Git
+4. Git: Install Git
 
-A Code Editor (e.g., VSCode): Download VSCode
+5. A Code Editor (e.g., VSCode): Download VSCode
 
-Step 1: Clone the Repository
+### Step 1: Clone the Repository
 
 Open a terminal and run the following command to clone the project:
 
-git clone <repository_url>
+`git clone VideoManagementSystem.git`
 
-Replace <repository_url> with your GitHub repository URL.
+`cd VideoManagementSystem`
 
-cd <project-folder>
-
-Step 2: Install Dependencies
+### Step 2: Install Dependencies
 
 Install server-side dependencies:
 
-cd server
-npm install
+`cd server
+npm install`
 
 Install client-side dependencies:
 
-cd ../client
-npm install
+`cd ../client
+npm install`
 
-Step 3: Configure Environment Variables
+### Step 3: Configure Environment Variables
 
 Create a .env file in both the server and client folders based on the provided .env.example (if available).
 
