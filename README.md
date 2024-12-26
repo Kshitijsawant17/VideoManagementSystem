@@ -64,7 +64,7 @@ Start the Server:
 
 Navigate to the server directory and run:
 
-`npm start`
+`npm run dev`
 
 Start the Client:
 
