@@ -1,4 +1,4 @@
-#Prerequisites
+## Prerequisites
 
 Ensure the following are installed on your machine:
 
