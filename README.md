@@ -2,7 +2,7 @@
 
 Ensure the following are installed on your machine:
 
-1. Node.js (v14 or later): Download Node.js
+1. Node.js (v14 or later): Download Node.js (https://www.educative.io/edpresso/what-is-mern-stack)
 
 2. npm (bundled with Node.js) or yarn (optional): Install Yarn
 
