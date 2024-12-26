@@ -24,13 +24,13 @@ Open a terminal and run the following command to clone the project:
 
 Install server-side dependencies:
 
-`cd server
-npm install`
+`cd server`
+`npm install`
 
 Install client-side dependencies:
 
-`cd client
-npm install`
+`cd client`
+`npm install`
 
 ### Step 3: Configure Environment Variables
 
@@ -88,8 +88,8 @@ Backend API: (http://localhost:5000/api)
 
 Delete node_modules and package-lock.json or yarn.lock, then reinstall dependencies:
 
-`rm -rf node_modules package-lock.json
-npm install`
+`rm -rf node_modules package-lock.json`
+`npm install`
 
 2. MongoDB Connection Errors:
 
@@ -105,5 +105,5 @@ Modify the PORT in the .env file if another process is using the default ports.
 
 Ensure your server has CORS enabled:
 
-`const cors = require('cors');
-app.use(cors());`
+`const cors = require('cors');`
+`app.use(cors());`
