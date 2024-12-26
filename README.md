@@ -2,21 +2,21 @@
 
 Ensure the following are installed on your machine:
 
-1. Node.js (v14 or later): [Download Node.js] (https://www.educative.io/edpresso/what-is-mern-stack)
+1. Node.js (v14 or later): [Download Node.js](https://www.educative.io/edpresso/what-is-mern-stack)
 
-2. npm (bundled with Node.js) or yarn (optional): Install Yarn
+2. npm (bundled with Node.js) or yarn (optional): [Install Yarn](https://classic.yarnpkg.com/lang/en/docs/install/)
 
 3. MongoDB: Install MongoDB Community Edition or use a cloud solution like MongoDB Atlas.
 
-4. Git: Install Git
+4. Git: [Install Git](https://git-scm.com/downloads)
 
-5. A Code Editor (e.g., VSCode): Download VSCode
+5. A Code Editor (e.g., VSCode): [Download VSCode](https://code.visualstudio.com/download)
 
 ### Step 1: Clone the Repository
 
 Open a terminal and run the following command to clone the project:
 
-`git clone VideoManagementSystem.git`
+`git clone https://github.com/Kshitijsawant17/VideoManagementSystem.git`
 
 `cd VideoManagementSystem`
 
@@ -38,13 +38,23 @@ Create a .env file in both the server and client folders based on the provided .
 
 Example .env for the Server:
 
-PORT=5000
-MONGO_URI=mongodb://localhost:27017/mern_database
-JWT_SECRET=your_jwt_secret
+`PORT=5000`
+
+`DB_HOST=localhost`
+`DB_PORT=27017`
+`DB_NAME=video-dataset`
+`DB_USER=http`
+`DB_PASS=`
+
+`JWT_SECRET=1234567890`
+
+`NODE_ENV=development`
+
 
 Example .env for the Client:
 
-REACT_APP_API_URL=http://localhost:5000/api
+`REACT_APP_CLIENT_HOST_DEV=http://localhost:3000`
+`REACT_APP_API_HOST_DEV=http://localhost:5000`
 
 Note: Replace placeholders like your_jwt_secret and mern_database with actual values.
 
