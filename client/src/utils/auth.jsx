@@ -15,14 +15,12 @@ export const isAuthenticated = () => {
     return localStorage.getItem('id');
   };
   
-  // Set the token in localStorage
   export const setUserData = (data) => {
     localStorage.setItem('token', data.token);
     localStorage.setItem('role', data.role);
     localStorage.setItem('id', data.id);
   };
   
-  // Remove the token from localStorage
   export const removeUserData = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('role');
