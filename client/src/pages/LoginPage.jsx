@@ -108,7 +108,7 @@ const LoginPage = () => {
         </Button>
 
         <Box mt={2} textAlign="center">
-          <Typography variant="body2">
+          <Typography variant="body2" color='black'>
             Don't have an account?{' '}
             <Link to="/signup" style={{ textDecoration: 'none', color: '#1976d2' }}>
               Sign Up

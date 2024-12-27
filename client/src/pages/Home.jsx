@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
 import { TabContext, TabList, TabPanel } from '@mui/lab';
-import { fetchVideos, getClientVideos } from '../service/video.service';
-import { fetchPlayLists, getClientPlaylists } from '../service/playList.service';
 import { getCloneStatus } from '../service/user.service';
 import { isAuthenticated, removeUserData, getId } from '../utils/auth';
+import { fetchAllVideos, fetchClientVideos } from '../redux/slices/videoSlice';
+import { fetchPlaylists, fetchClientPlaylists } from '../redux/slices/playlistSlice';
 import { 
     Box, 
     Tab,
@@ -34,11 +35,13 @@ const playlistColumns = [
 
 const Home = () => {
   const [value, setValue] = React.useState('1');
-  const [videos, setVideos] = useState([]);
-  const [playLists, setPlayLists] = useState([]);
   const [logo, setLogo] = useState(`${process.env.REACT_APP_API_HOST_DEV}` + '/uploads/logo/company_logo.png');
 
   const authenticated = isAuthenticated();
+  const dispatch = useDispatch();
+
+  const videos = useSelector((state) => state.video.videos);
+  const playlists = useSelector((state) => state.playlist.playlists);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -50,16 +53,12 @@ const Home = () => {
     try{
         const cloneRes = await getCloneStatus({userId: id});
         if(cloneRes.data.cloneStatus){
-            const { data } = await fetchVideos({userId: id});
-            if(data.length > 0) setVideos( data );
-            const playRes = await fetchPlayLists();
-            setPlayLists(playRes.data.data);
+            dispatch(fetchAllVideos());
+            dispatch(fetchPlaylists());
         }
         else {
-            const { data } = await getClientVideos({userId: id});
-            if(data.length > 0) setVideos( data );
-            const playRes = await getClientPlaylists({userId: id});
-            if(playRes.data.length > 0) setPlayLists(playRes.data);
+            dispatch(fetchClientVideos({userId: id}));
+            dispatch(fetchClientPlaylists({userId: id}));
         }
     }
     catch(err){
@@ -159,7 +158,7 @@ const Home = () => {
                 </TableHead>
                 <TableBody>
                     {
-                    playLists.map((row, index) => {
+                    playlists.map((row, index) => {
                         return (
                             <TableRow hover key={index} >
                                 <TableCell align='center' style={{color:'white'}}>{index + 1}</TableCell>

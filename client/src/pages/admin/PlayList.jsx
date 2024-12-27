@@ -1,31 +1,32 @@
 import React, { useState, useEffect} from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
 import HeaderBar from '../../components/HeaderBar';
-import { 
-  fetchPlayLists, 
+import { fetchPlaylists } from '../../redux/slices/playlistSlice';
+import { getId } from '../../utils/auth';
+import AlertDialog from '../../components/CustomDialog';
+import {
   addPlayList, 
   deletePlaylist, 
   editPlayList 
 } from '../../service/playList.service';
-import { getId } from '../../utils/auth';
-import AlertDialog from '../../components/CustomDialog';
 import { 
-    Box, 
-    Button, 
-    Modal, 
-    TextField, 
-    Fab, 
-    TableContainer, 
-    TableHead, 
-    TableRow, 
-    Table, 
-    TableCell, 
-    TableBody,
-    Typography,
-    IconButton,
-    Input,
-    Snackbar,
-    Alert
+  Box, 
+  Button, 
+  Modal, 
+  TextField, 
+  Fab, 
+  TableContainer, 
+  TableHead, 
+  TableRow, 
+  Table, 
+  TableCell, 
+  TableBody,
+  Typography,
+  IconButton,
+  Input,
+  Snackbar,
+  Alert
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
@@ -55,7 +56,6 @@ const style = {
 const PlayList = () => {
   const [name, setName] = useState("");
   const [open, setOpen] = useState(false);
-  const [playList, setPlayList] = useState([]);
   const [startEdit, setStartEdit] = useState(false);
   const [editingId, setEditingId] = useState("");
   const [editedData, setEditedData] = useState("");
@@ -67,6 +67,8 @@ const PlayList = () => {
   const [playlistId, setPlaylistId] = useState("");
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const playList = useSelector((state) => state.playlist.playlists);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
@@ -82,7 +84,7 @@ const PlayList = () => {
       setAlertMessage(response.data.message);
       if(response.status == 200) setOpenSuccessAlert(true);
       else setOpenErrorAlert(true);
-      fetchPlayListFunc();
+      dispatch(fetchPlaylists());
     }
     
   }
@@ -95,14 +97,7 @@ const PlayList = () => {
     }
     startEdit?setStartEdit(false):setStartEdit(true);
     editingId?setEditingId(""):setEditingId(id);
-    await fetchPlayListFunc();
-  }
-  const handleInputChange = (e, id) => {
-    setEditedData(e.target.value);
-  }
-  const handleInputFocus = (e) => {
-    setEditedData(e.target.defaultValue);
-    console.log(e.target.defaultValue);
+    dispatch(fetchPlaylists());
   }
   const handleCloseSuccessAlert = (e, reason) => {
     if (reason === 'clickaway') {
@@ -116,29 +111,20 @@ const PlayList = () => {
     }
     setOpenErrorAlert(false);
   }
-  const fetchPlayListFunc = async () => {
-    try{
-        const response = await fetchPlayLists();
-    
-        setPlayList(response.data.data);
-    }
-    catch(err){
-        console.log(err);
-    }
-  }
+
   const addPlayListFunc = async () => {
     handleClose();
     const userId = getId();
     try {
         await addPlayList({ userId: userId, name: name });
-        fetchPlayListFunc();
+        dispatch(fetchPlaylists());
     } catch (err) {
         console.log(err);
     }
   }
 
   useEffect(() => {
-    fetchPlayListFunc();
+    dispatch(fetchPlaylists());
   }, []);
 
   return (
@@ -182,8 +168,8 @@ const PlayList = () => {
                               size="small"
                               sx={{ width: "150px", color: "white" }}
                               defaultValue={row.name}
-                              onChange={(e) => handleInputChange(e, row._id)}
-                              onFocus={(e) =>handleInputFocus(e)}
+                              onChange={(e) => setEditedData(e.target.value)}
+                              onFocus={(e) =>setEditedData(e.target.defaultValue)}
                             />
                           ) : (
                             row.name

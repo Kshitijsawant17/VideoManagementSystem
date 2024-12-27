@@ -74,7 +74,7 @@ const getVideos = async (req, res) => {
         }
       })
     );
-    return res.json(videoDetails);
+    return res.status(200).json({message: 'success', data: videoDetails});
   } catch (error) {
     return res.status(500).json({ message: 'Server error', error });
   }
@@ -118,7 +118,7 @@ const getClientVideos = async (req, res) => {
         }
       })
     );
-    return res.status(200).json(videoDetails);
+    return res.status(200).json({message: 'success', data: videoDetails});
   } catch (error) {
     return res.status(500).json({ message: 'Server error', error });
   }

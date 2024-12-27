@@ -1,48 +1,33 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import API from '../../service/axiosInstance';
+import { fetchPlayLists, getClientPlaylists } from '../../service/playList.service';
 
 const initialState = {
   playlists: [],
-  status: 'idle', // 'idle' | 'loading' | 'succeeded' | 'failed'
-  error: null,
 };
 
-// Async thunk to fetch playlist data
-export const fetchPlaylists = createAsyncThunk('playlist/get_all', async () => {
-  const response = await API.get('/playlist/get_all');
-  return response.data;
+export const fetchPlaylists = createAsyncThunk('playlist/fetchPlayLists', async () => {
+  const response = await fetchPlayLists();
+  return response.data.data;
 });
 
-export const addPlaylist = createAsyncThunk('playlist/add', async (newPlaylist, thunkAPI) => {
-    try {
-      const response = await API.post('/playlist/add', newPlaylist);
-      return response.data;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error.response?.data || 'Failed to add playlist');
-    }
+export const fetchClientPlaylists = createAsyncThunk('playlist/fetchClientPlayLists', async (data) => {
+  const response = await getClientPlaylists(data);
+  return response.data.data;
 });
 
-const playListSlice = createSlice({
+const playlistSlice = createSlice({
   name: 'playlist',
   initialState,
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(fetchPlaylists.pending, (state) => {
-        state.status = 'loading';
-      })
       .addCase(fetchPlaylists.fulfilled, (state, action) => {
-        state.status = 'succeeded';
         state.playlists = action.payload;
       })
-      .addCase(fetchPlaylists.rejected, (state, action) => {
-        state.status = 'failed';
-        state.error = action.error.message;
-      });
+      .addCase(fetchClientPlaylists.fulfilled, (state, action) => {
+        state.playlists = action.payload;
+      })
   },
 });
 
-export const selectPlaylists = (state) => state.playlist.playlists;
-export const selectPlaylistStatus = (state) => state.playlist.status;
-
-export default playListSlice.reducer;
+export default playlistSlice.reducer;

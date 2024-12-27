@@ -1,10 +1,12 @@
 import React, { useState, useEffect} from 'react';
 import HeaderBar from '../../components/HeaderBar';
 import { useNavigate } from 'react-router-dom';
-import { fetchPlayLists } from '../../service/playList.service';
-import { fetchVideos, videoUpload, deleteVideo, editVideo } from '../../service/video.service';
+import { useSelector, useDispatch } from 'react-redux';
+import { videoUpload, deleteVideo, editVideo } from '../../service/video.service';
 import { editVideoPlayList } from '../../service/videoPlaylist.service';
 import AlertDialog from '../../components/CustomDialog';
+import { fetchAllVideos } from '../../redux/slices/videoSlice';
+import { fetchPlaylists } from '../../redux/slices/playlistSlice';
 import { 
     Box, 
     Button, 
@@ -70,8 +72,6 @@ const VisuallyHiddenInput = styled('input')({
 const Video = () => {
   const [videoFile, setVideoFile] = useState(null);
   const [selectVideoModalOpen, setSelectVideoModalOpen] = useState(false);
-  const [playLists, setPlayList] = useState([]);
-  const [videos, setVideos] = useState([])
   const [title, setTitle] = useState("");
   const [description, setDesc] = useState("");
   const [listValue, setListValue] = useState("");
@@ -80,7 +80,6 @@ const Video = () => {
   const [editingId, setEditingId] = useState("");
   const [descEditedData, setDescEditedData] = useState("");
   const [titleEditedData, setTitleEditedData] = useState("");
-
   const [alertMessage, setAlertMessage] = useState("");
   const [openSuccessAlert, setOpenSuccessAlert] = useState(false);
   const [openErrorAlert, setOpenErrorAlert] = useState(false);
@@ -88,12 +87,13 @@ const Video = () => {
   const [videoId, setVideoId] = useState("");
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  
+  const videos = useSelector((state) => state.video.videos);
+  const playlists = useSelector((state) => state.playlist.playlists);
+
   const handleselectVideoModalClose = () => setSelectVideoModalOpen(false);
 
-  const fetchVideoFunc = async () => {
-    const response = await fetchVideos();
-    if(response.data.length > 0) setVideos(response.data);
-  };
   const handleDialog = (e, id) => {
     setVideoId(id);
     setOpenDialog(true);
@@ -109,12 +109,9 @@ const Video = () => {
       setAlertMessage(response.data.message);
       if(response.status == 200) setOpenSuccessAlert(true);
       else setOpenErrorAlert(true);
-      await fetchVideoFunc();
+      dispatch(fetchAllVideos());
     }
     
-  }
-  const handlePlaylistSelectChange = (e) => {
-    setSelectedPlaylist(e.target.value)
   }
   const handleEdit = async (id) => {
     if(startEdit){
@@ -125,19 +122,7 @@ const Video = () => {
     }
     startEdit?setStartEdit(false):setStartEdit(true);
     editingId?setEditingId(""):setEditingId(id);
-    await fetchVideoFunc();
-  }
-  const handleTitleInputChange = (e, id) => {
-    setTitleEditedData(e.target.value);
-  }
-  const handleTitleInputFocus = (e) => {
-    setTitleEditedData(e.target.defaultValue);
-  }
-  const handleDescInputChange = (e, id) => {
-    setDescEditedData(e.target.value);
-  }
-  const handleDescInputFocus = (e) => {
-    setDescEditedData(e.target.defaultValue);
+    dispatch(fetchAllVideos());
   }
   const handleCloseSuccessAlert = (e, reason) => {
     if (reason === 'clickaway') {
@@ -151,17 +136,6 @@ const Video = () => {
     }
     setOpenErrorAlert(false);
   }
-
-  const fetchPlayListFunc = async () => {
-    try{
-        const response = await fetchPlayLists();
-    
-        setPlayList(response.data.data);
-    }
-    catch(err){
-        console.log(err);
-    }
-  }
   const addVideoFunc = async () => {
     handleselectVideoModalClose();
     try {
@@ -172,16 +146,16 @@ const Video = () => {
       formData.append('playlist', selectedPlaylist);
       const data  = await videoUpload(formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
-      })      
-      await fetchVideoFunc();
+      })
+      dispatch(fetchAllVideos());
     } catch (err) {
       console.log(err);
     }
   }
 
   useEffect(() => {
-    fetchPlayListFunc();
-    fetchVideoFunc();
+    dispatch(fetchPlaylists());
+    dispatch(fetchAllVideos());
   }, [listValue ]);
 
   return (
@@ -227,8 +201,8 @@ const Video = () => {
                                 size="small"
                                 sx={{ width: "150px", color: "white" }}
                                 defaultValue={row.title}
-                                onChange={(e) => handleTitleInputChange(e, row.id)}
-                                onFocus={(e) =>handleTitleInputFocus(e)}
+                                onChange={(e) => setTitleEditedData(e.target.value)}
+                                onFocus={(e) =>setTitleEditedData(e.target.defaultValue)}
                               />
                             ) : (
                               row.title
@@ -244,8 +218,8 @@ const Video = () => {
                                     multiline
                                     rows={4}
                                     defaultValue={row.description}
-                                    onChange={(e) => handleDescInputChange(e, row.id)}
-                                    onFocus={(e) =>handleDescInputFocus(e)}
+                                    onChange={(e) => setDescEditedData(e.target.value)}
+                                    onFocus={(e) =>setDescEditedData(e.target.defaultValue)}
                                   />
                                 ) : (
                                   row.description
@@ -266,7 +240,7 @@ const Video = () => {
                                           <em>None</em>
                                       </MenuItem>
                                       {
-                                          playLists? playLists.map((item, index) => {
+                                          playlists? playlists.map((item, index) => {
                                               return (
                                                   <MenuItem value={item.name} key={index}>{item.name}</MenuItem>
                                               )
@@ -401,14 +375,14 @@ const Video = () => {
               labelId="playlist-select-label"
               id="playlist-select"
               value={selectedPlaylist}
-              onChange={(e) => handlePlaylistSelectChange(e)}
+              onChange={(e) => setSelectedPlaylist(e.target.value)}
               label="PlayList"
             >
               <MenuItem value="">
                 <em>None</em>
               </MenuItem>
               {
-                playLists.map((item, index) => {
+                playlists.map((item, index) => {
                   return (
                     <MenuItem key={index} value={item.name}>{item.name}</MenuItem>
                   )

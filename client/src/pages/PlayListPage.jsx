@@ -49,7 +49,6 @@ const PlayListPage = () => {
   }
   const getAgreeStatusFunc = async () => {
     const response =  await getAgreeStatus({id: userId});
-    console.log(response.data.agreeStatus);
     setAgreeStatus(response.data.agreeStatus);
   }
   const fetchPlayListFunc = async () => {
@@ -64,9 +63,6 @@ const PlayListPage = () => {
       setLoading(false);
     }
   };
-  const changeVideo = (path) => {
-    setPath(path);
-  }
 
   useEffect(() => {
     if (id) {
@@ -80,7 +76,6 @@ const PlayListPage = () => {
       getAgreeStatusFunc()
     }
   }, [id, userId, playListID]);
-
   
   if (loading) {
     return <p>Loading...</p>;
@@ -141,7 +136,7 @@ const PlayListPage = () => {
           <List sx={{ width: '100%' }}>
             {playList.map((item, index) => (
               <ListItem key={index} component="div" disablePadding>
-                <ListItemButton onClick={(e) => changeVideo(item.filePath)}>
+                <ListItemButton onClick={(e) => setPath(item.filePath)}>
                   <div className="playList-item">
                   <video
                     src={`${process.env.REACT_APP_API_HOST_DEV}${playList[0].filePath}`}

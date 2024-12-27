@@ -1,9 +1,11 @@
 import React, { useState, useEffect} from 'react';
 import HeaderBar from '../../components/HeaderBar';
 import { useNavigate } from 'react-router-dom';
-import { fetchUsers, changeAgreeStatus, changeCloneStatus } from '../../service/user.service';
+import { useSelector, useDispatch } from 'react-redux';
+import { changeAgreeStatus, changeCloneStatus } from '../../service/user.service';
 import { fetchUserVideo, addUserVideo, deleteUserVideo } from '../../service/userVideo.service';
 import { fetchUserPlaylist, addUserPlaylist, deleteUserPlaylist } from '../../service/userPlaylist.service';
+import { fetchAllUsers } from '../../redux/slices/userSlice';
 import { 
     Box,
     Modal,
@@ -70,13 +72,14 @@ const User = () => {
   const [openPlaylistModal, setOpenPlaylistModal] = useState(false);
   const [playLists, setPlayLists] = useState([]);
   const [videos, setVideos] = useState([])
-  const [users, setUsers] = useState([])
   const [userId, setUserID] = useState("");
   const [videoCopied, setVideoCopied] = useState(false);
   const [playlistCopied, setPlaylistCopied] = useState(false);
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
+  const users = useSelector((state) => state.user.users);
   const handleVideoModalClose = () => setOpenVideoModal(false);
   const handleVideoModalOpen = async (e, userId) => {
     setUserID(userId);
@@ -144,15 +147,14 @@ const User = () => {
         userId: userId, 
         status: true
       })
-      fetchUserFunc(userId)
     }
     else {
       await changeAgreeStatus({
         userId: userId, 
         status: false
       })
-      fetchUserFunc();
     }
+    dispatch(fetchAllUsers());
   }
   const handleCloneChange = async (e, userId) => {
     if(e.target.checked){
@@ -160,15 +162,14 @@ const User = () => {
         userId: userId, 
         status: true
       })
-      fetchUserFunc(userId)
     }
     else {
       await changeCloneStatus({
         userId: userId, 
         status: false
       })
-      fetchUserFunc();
     }
+    dispatch(fetchAllUsers());
   }
   const fetchUserPlayListFunc = async (userId) => {
     try{
@@ -179,18 +180,9 @@ const User = () => {
         console.log(err);
     }
   }
-  const fetchUserFunc = async () => {
-    try{
-        const response = await fetchUsers();
-        setUsers(response.data.data);
-    }
-    catch(err){
-        console.log(err);
-    }
-  }
 
   useEffect(() => {
-    fetchUserFunc();
+    dispatch(fetchAllUsers());
   }, []);
 
   return (

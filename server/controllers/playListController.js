@@ -74,7 +74,7 @@ const getClientPlaylists = async (req, res) => {
           }
         })
       );
-      return res.status(200).json(playlistDetails);
+      return res.status(200).json({message: 'success', data: playlistDetails});
     } catch (error) {
       console.error(MESSAGE_CONSTANTS.PLAYLIST_FETCH_FAILED, error);
       return res.status(500).json({ message: 'Server error', error });
